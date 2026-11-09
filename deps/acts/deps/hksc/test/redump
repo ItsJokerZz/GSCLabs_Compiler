@@ -1,0 +1,131 @@
+#!/bin/sh
+# redump: Load precompiled Lua files and dump them again to the same files
+
+me=$0
+
+luac=
+luadebug=
+luaprofile=
+cod=maybe
+flags=$HKSCFLAGS
+hksc=${HKSC-./hksc}
+
+error()
+{
+	echo "$me: $*" >&2
+	exit 1
+}
+
+checknotempty()
+{
+	var=$1
+	opt=$2
+	eval "val=\$$var"
+	test "x$val" = x && error "You must provide a value with '$opt'"
+}
+
+usage()
+{
+	cat <<EOF
+Usage: $me [options]
+
+Options:
+  --help                        Print this message and exit
+  --bytecode-file=FILE          Load stripped bytecode from FILE and redump it
+  --debug-file=FILE             If '--cod=no', load FILE as Lua bytecode and
+                                debug info and redump it
+                                If '--cod=yes', load FILE as Lua debug info
+                                and redump it
+  --profile-file=FILE           If '--cod=no', load FILE as Lua bytecode and
+                                profiling info and redump it
+                                If '--cod=yes', redump callstack reconstruction
+                                to FILE
+  --cod=[YES|NO]                Assume whether Call of Duty extensions are
+                                enabled in the HKSC executable
+
+Environment variables:
+  HKSC                          Must be set to the file to use as the hksc
+                                executable
+  HKSCFLAGS                     Any flags to pass to invokations of HKSC
+
+About Call of Duty mode:
+  If '--cod=yes' is provided, or it isn't but this script detects that HKSC is
+  a Call of Duty build, '--bytecode-file' must be provided even if only dumping
+  debug info, as it needs a source to load bytecode from.
+
+Examples:
+  ./redump --cod=yes --bytecode-file=test.luac --debug-file=test.luadebug
+  ./redump --cod=no --debug-file=test.luac
+
+  In the first example, 'test.luac' is expected to be a stripped binary, and
+  'test.luadebug' is expected to contain only debug info.
+  In the second example, 'test.luac' is expected to contain embedded debug info
+EOF
+	exit 0
+}
+
+while test "x$1" != x; do
+	case $1 in
+		--help) usage;;
+		--bytecode-file=*) luac=${1#*=};;
+		--debug-file=*) luadebug=${1#*=};;
+		--profile-file=*) luaprofile=${1#*=};;
+		--cod=*) cod=${1#*=};;
+	esac
+	shift
+done
+
+case $cod in
+	YES|NO|Yes|No|yes|no|maybe) ;;
+	1) cod=yes;;
+	0) cod=no;;
+	*) error "invalid use of '--cod'";;
+esac
+
+if test ! -e "$hksc" || test ! -x "$hksc"; then
+	error \
+	"'$hksc' is not a valid executable (set HKSC correctly in the invokation)"
+fi
+
+if test "x$cod" = "xmaybe"; then
+	codstatus=`"$hksc" --print-config 2>&1 | \
+	sed -n 's/^[ 	]*T6[ 	]*extensions[ 	]*\(.*\)$/\1/p'`
+	case $codstatus in
+		Enabled|enabled) cod=yes;;
+		*) cod=no;;
+	esac
+fi
+
+if test "x$cod" = xyes; then
+	checknotempty luac --bytecode-file
+	test -e "$luac" || error "$luac does not exist"
+	tmp="$luac.$$"
+	cp -f -- "$luac" "$tmp" || exit $?
+	if test "$xluadebug" != x; then
+		checknotempty luaprofile --profile-file
+	fi
+	# redump bytecode
+	"$hksc" $flags -s "$tmp" -o "$luac"
+	status=$?
+	if test $status = 0 && test "x$luadebug" != x; then
+		# redump callstackdb and debug info
+		"$hksc" $flags --with-debug --debugfile="$luadebug" "$tmp" \
+		--callstackdb="$luaprofile" -o /dev/null
+		status=$?
+	fi
+	rm -f "$tmp"
+	exit $status
+else
+	if test "x$luac" != x; then
+		"$hksc" $flags -s "$luac" -o "$luac" || exit $?
+	fi
+	if test "x$luaprofile" != x; then
+		"$hksc" $flags -s=p "$luaprofile" -o "$luaprofile" || exit $?
+	fi
+	if test "x$luadebug" != x; then
+		"$hksc" $flags -s=n "$luadebug" -o "$luadebug" || exit $?
+	fi
+	exit 0
+fi
+			
+

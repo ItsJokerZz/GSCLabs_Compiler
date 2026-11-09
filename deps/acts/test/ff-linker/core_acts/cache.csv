@@ -1,0 +1,4 @@
+string,ACTS/TEST
+string,ACTS/TEST_OBJECTIVE_WAYPOINT
+string,ACTS/TEST_OBJECTIVE_DESC
+objective,acts_test_objective

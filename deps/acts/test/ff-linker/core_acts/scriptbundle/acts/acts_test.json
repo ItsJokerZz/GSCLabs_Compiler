@@ -1,0 +1,16 @@
+{
+    "val": "value",
+    "xhash": "#value",
+    "image": "image#test",
+    "weapon": "weapon#none",
+    "hash_d8020792": "xcam&test",
+    "number": 42,
+    "dur": "duration:60000",
+    "button": "enum:7",
+    "array": [
+        {
+            "item": 25,
+            "test": "#test"
+        }
+    ]
+}

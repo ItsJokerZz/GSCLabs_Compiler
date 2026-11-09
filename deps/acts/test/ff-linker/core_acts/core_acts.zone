@@ -1,0 +1,59 @@
+// example and test file for the fastfile linker
+
+// fastfile options
+>game=bo4              // the game to use
+>name=core_acts        // fastfile name
+>compression=zlib        // compression type, by default no compression is used
+>compression.high=true // use high compression
+
+// include another zone file
+include,test.zone
+
+// a script entry
+scriptparsetree,scripts/core_common/acts/no_linked_test.gsc
+// to automatically link a script, a '!' can be added
+scriptparsetree,!scripts/core_common/acts/echo_test.gsc
+scriptparsetree,!scripts/core_common/acts/echo_test.csc
+
+// a lua script
+luafile,lua/acts/test.lua
+luafile,ui/uieditor/menus/hud/actsmenu.lua
+
+// stringtable
+stringtable,acts/test.csv
+
+// structured table
+structuredtable,acts/demo_structured.json
+
+// a script bundle, the file will be searched in the scriptbundle directory.
+scriptbundle,acts/acts_test
+
+// images, the file will be searched in the images directory. the file extension will be removed
+image,acts_spray.png
+image,acts_test_hello_world.png
+image,acts_test_hover.png
+image,acts_test_icon.png
+
+objective,acts/objective/acts_test_objective.json
+
+// custom ttf
+ttf,acts/cascadiacode_bold.ttf
+ttf,acts/cascadiamono_bold.ttf
+
+bgcache,cache.csv
+//rawstring,acts_test_string
+
+// add a localize list file
+localizelist,acts/localize/all.json
+localizelist,acts/localize/fr.json
+localizelist,acts/localize/en.json
+
+// sound
+sound,acts/sound/all.json
+sound,acts/sound/fr.json
+sound,acts/sound/en.json
+
+// dev stuff
+#ifndef CI
+include,core_acts_dev.zone
+#endif

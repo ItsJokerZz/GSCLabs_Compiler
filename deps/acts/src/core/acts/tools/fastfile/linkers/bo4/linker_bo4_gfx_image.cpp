@@ -1,0 +1,183 @@
+#include <includes.hpp>
+#include <tools/fastfile/linkers/linker_bo4.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_DXT_IMPLEMENTATION
+#define STB_IMAGE_STATIC
+#define STB_DXT_STATIC
+#include <stb_image.h>
+#include <stb_dxt.h>
+
+namespace {
+    using namespace fastfile::linker::bo4;
+    enum GfxPixelFormat : int32_t {
+        GFX_PF_INVALID = 0x0,
+
+        // for normal non-compressed images
+        GFX_PF_R8G8B8A8_T1 = 28,
+        GFX_PF_R8G8B8A8_T2 = 29,
+        GFX_PF_R8G8B8A8_T3 = 31,
+        GFX_PF_R8G8B8A8_T4 = 87,
+
+        // for compressed images
+        GFX_PF_BC1 = 72,
+        GFX_PF_BC3 = 78,
+    };
+    enum MapType : byte {
+        MAPTYPE_NONE = 0x0,
+        MAPTYPE_2D = 0x1,
+        MAPTYPE_2D_ARRAY = 0x2,
+        MAPTYPE_3D = 0x3,
+        MAPTYPE_CUBE = 0x4,
+        MAPTYPE_CUBE_ARRAY = 0x5,
+        MAPTYPE_COUNT = 0x6,
+    };
+
+    struct GfxImage {
+        void* unk0;
+        void* dxgiAdapter;
+        uintptr_t unk10;
+        byte* pixels;
+        XHash name;
+        void* streamedParts;
+        uint64_t unk38;
+        uint64_t unk40;
+        uint64_t unk48;
+        uint64_t unk50;
+        uint32_t imageFlags;
+        uint32_t unk5c;
+        uint32_t totalSize;
+        GfxPixelFormat imageFormat;
+        uint16_t width;
+        uint16_t height;
+        uint16_t depth;
+        uint16_t unk6e;
+        byte unk70;
+        byte unk71;
+        uint16_t unk72;
+        uint16_t unk74;
+        byte unk76;
+        byte alignment;
+        byte unk78;
+        MapType mapType;
+        byte levelCount;
+        byte await_stream;
+        byte streaming;
+        byte streamedParts_count;
+        byte unk7e;
+        byte unk7f;
+        uint64_t unk80;
+    };
+    static_assert(sizeof(GfxImage) == 0x88);
+
+    class XAssetLinkerImpl : public XAssetLinker {
+      public:
+        using XAssetLinker::XAssetLinker;
+
+        void Compute(BO4LinkContext& ctx, const char* id, BO4FFContext& ff) override {
+            if (*id == '#')
+                id++; // ignore start #
+            std::filesystem::path path{ ctx.linkCtx.input / "images" / id };
+            std::filesystem::path filename{ path.filename() };
+            filename.replace_extension();
+            std::string name{ filename.string() };
+            uint64_t hash{ ctx.HashXHash(name.data()) };
+            std::string pathStr{ path.string() };
+
+            // header
+            ff.data.PushStream(XFILE_BLOCK_TEMP);
+            GfxImage& gfx{ ff.data.AllocStreamRef<GfxImage>() };
+            gfx.name.name = hash;
+
+            LOG_TRACE("Processing image {} ({}) 0x{:x}", name, path.string(), hash);
+            int x, y, channels;
+            stbi_uc* img{ stbi_load(pathStr.data(), &x, &y, &channels, 0) };
+
+            if (!img) {
+                ctx.error = true;
+                LOG_ERROR("Can't process image {}: {}", path.string(), stbi_failure_reason());
+                return;
+            }
+
+            utils::CloseEnd imgce{ [img]() { stbi_image_free(img); } };
+
+            gfx.unk0 = 0;
+            gfx.totalSize = x * y * channels;
+            gfx.mapType = MAPTYPE_2D;
+            gfx.levelCount = 1;
+            gfx.depth = 1;
+            gfx.pixels = (byte*)fastfile::linker::memory::POINTER_NEXT;
+
+            LOG_TRACE("Image: {}x{}x{}", x, y, channels);
+
+            /*
+            switch (channels) {
+            case 4:
+                gfx.imageFormat = GFX_PF_R8G8B8A8_T2;
+                break;
+            default:
+                LOG_ERROR("Can't compile {} channels image", channels);
+                ctx.error = true;
+                return;
+            }
+            */
+
+            uint32_t blockW{ (uint32_t)((x + 3) / 4) };
+            uint32_t blockH{ (uint32_t)((y + 3) / 4) };
+
+            gfx.width = (uint16_t)(blockW * 4);
+            gfx.height = (uint16_t)(blockH * 4);
+
+            bool hasAlpha{ false };
+            for (int i = 0; i < x * y && !hasAlpha; i++) {
+                if (img[i * 4 + 3] != 255)
+                    hasAlpha = true;
+            }
+
+            size_t blockSize{ hasAlpha ? (size_t)16 : (size_t)8 };
+            std::vector<byte> compressed(blockW * blockH * blockSize);
+            if (channels == 4) {
+                for (uint32_t by = 0; by < blockH; by++) {
+                    for (uint32_t bx = 0; bx < blockW; bx++) {
+                        byte block[4 * 4 * 4]{}; // 4x4 RGBA, zero-padded for edge blocks
+                        for (uint32_t py = 0; py < 4; py++) {
+                            uint32_t sy{ by * 4 + py };
+                            if (sy >= (uint32_t)y)
+                                break;
+                            for (uint32_t px = 0; px < 4; px++) {
+                                uint32_t sx{ bx * 4 + px };
+                                if (sx >= (uint32_t)x)
+                                    break;
+                                std::memcpy(&block[(py * 4 + px) * 4], &img[(sy * x + sx) * 4], 4);
+                            }
+                        }
+                        stb_compress_dxt_block(
+                            &compressed[(by * blockW + bx) * blockSize],
+                            block,
+                            hasAlpha ? 1 : 0,
+                            STB_DXT_HIGHQUAL
+                        );
+                    }
+                }
+            } else {
+                LOG_ERROR("Can't compile {} channels image", channels);
+                ctx.error = true;
+                return;
+            }
+
+            gfx.totalSize = (uint32_t)compressed.size();
+            gfx.imageFormat = (GfxPixelFormat)(hasAlpha ? GFX_PF_BC3 : GFX_PF_BC1);
+
+            ff.data.PushStream(XFILE_BLOCK_PHYSICAL);
+            // pixels
+            ff.data.Align(0xFF);
+            ff.data.WriteStream(compressed.data(), gfx.totalSize);
+
+            ff.data.PopStream();
+
+            ff.data.PopStream();
+            LOG_INFO("Added asset gfximage {} (hash_{:x})", id, hash);
+        }
+    };
+
+    utils::MapAdder<XAssetLinkerImpl, XAssetType, XAssetLinker> impl{ GetWorkers(), XAssetType::ASSET_TYPE_IMAGE };
+} // namespace

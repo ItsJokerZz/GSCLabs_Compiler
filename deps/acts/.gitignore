@@ -1,0 +1,93 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+.antlr
+scripts/antlr4.jar
+.antlr4
+*.aps
+
+# Private stuff
+src/acts/tools/gsc/vm/gsc_vm_private_*.cpp
+src/**/_private_*.cpp
+src/**/_private_*.hpp
+# VS
+/.vs/
+/.vscode/
+/build/
+
+# tools files
+package_index*
+strings.txt
+hashes.txt
+brute.txt
+pool.csv
+linked.csv
+events.csv
+funcs.csv
+cfuncs.csv
+dataset.csv
+scriptparsetree*
+output*
+/pool/
+/poolcw/
+/proxy/
+vm_codes.db2
+bgpool
+
+# pack file
+*.acpf
+*.actsop
+*.adlc
+
+*.log
+
+# compiler gsc files
+*.gscc
+*.gsccasm
+*.cscc
+*.csccasm
+*.gscp
+*.gscasmp
+*.cscp
+*.cscasmp
+*.gscgdb
+*.cscgdb
+*.gsc.gdb
+*.csc.gdb
+*.gscgdbc
+*.cscgdbc
+# compiler lua files
+*.dec.lua
+*.luac
+
+gfxworld.json
+/deps/Modern-Warfare-BDiff

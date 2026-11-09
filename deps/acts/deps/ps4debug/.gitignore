@@ -1,0 +1,11 @@
+*.o
+*.bin
+*.elf
+*.rar
+*.zip
+*.dll
+*.pdb
+temp.t
+.vscode
+.vs
+libdebug/csharp/obj/

@@ -1,0 +1,32 @@
+#warning use dev configs
+
+#ifdef CI
+#error DEV CONFIGS DEPLOYED TO CI
+#endif
+// cause max depth error
+//include,core_acts_dev.zone
+
+
+// requires the oodle ddl, so I don't deploy it as default
+>compression=oodle_kraken
+
+// gsc configs
+>gsc.gendbg=true
+>gsc.dev=true
+>lua.defs=LUA_DEV,CI
+
+//asdzqzqd,missing_asset_test
+
+
+#ifdef TEST_ASSETS
+
+ranktable,acts/ranktable.csv
+prestigetable,acts/prestigetable.csv
+
+scriptbundle,acts/custom_aitype_testbundle
+aitype,acts/aitype/custom_aitype.json
+
+// it is possible to link an asset from another fastfile using a ',' before the asset name
+// an empty asset will be used if the asset isn't loaded elsewhere
+customizationtable,,wz_character_customization
+#endif

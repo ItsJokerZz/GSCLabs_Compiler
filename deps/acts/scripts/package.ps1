@@ -1,0 +1,153 @@
+param(
+    [switch]
+    $deployQt
+)
+
+
+
+$prevPwd = $PWD
+
+try {
+    $base = (Get-Item $PSScriptRoot).parent
+    Set-Location ($base.Fullname)
+    
+    scripts\copydata.ps1
+
+    $base = "build/package/acts"
+
+    # Delete previous builds
+    Remove-Item -Recurse -Force -ErrorAction Ignore  "$base" > $null
+    Remove-Item -Force -ErrorAction Ignore "$base.zip" > $null
+    Remove-Item -Force -ErrorAction Ignore "$base-dev.zip" > $null
+    
+    # Create structure
+    New-Item "$base" -ItemType Directory > $null
+    New-Item "$base/bin" -ItemType Directory > $null
+    New-Item "$base/lib" -ItemType Directory > $null
+
+    # api
+    Copy-Item "build/bin/Release/acts-common.lib" "$base/lib" > $null
+    Copy-Item "build/bin/Release/acts-common-ui.lib" "$base/lib" > $null
+    Copy-Item -Recurse "include" "$base" > $null
+    Copy-Item -Recurse "licenses" "$base" > $null
+    Copy-Item -Recurse "examples" "$base" > $null
+
+    # Scans
+    Copy-Item "build/bin/Release/data" "$base/bin" -Recurse > $null
+
+    # Info data
+    Copy-Item "README.md" "$base/README.md" > $null
+    Copy-Item "release/version" "$base/bin/version" > $null
+
+    # Binaries
+    Copy-Item "build/bin/Release/*.dll" "$base/bin" > $null
+    Copy-Item "build/bin/Release/*.exe" "$base/bin" > $null
+    New-Item "$base/bin/package_index" -ItemType Directory > $null
+
+    # Clear test dlls/exes
+    Remove-Item -Force -ErrorAction Ignore "$base/bin/test-*.dll" > $null
+    Remove-Item -Force -ErrorAction Ignore "$base/bin/test-*.exe" > $null
+
+    # Clear builder
+    Remove-Item -Force -ErrorAction Ignore "$base/bin/abp_*.exe" > $null
+
+    # Build exec data
+
+    if ($deployQt) {
+        $qtActs = Get-Content "qt_acts.json" | ConvertFrom-Json
+
+        $qtversion = windeployqt --version
+        Write-Host "Deploy Qt Version $qtversion"
+
+        $qtActs.executables | ForEach-Object {
+            windeployqt @($qtActs.options) "$base/bin/$_"
+        }
+        $qtActs.delete | ForEach-Object {
+            Remove-Item "$base/bin/$_" -Recurse -Force -ErrorAction Ignore
+        }
+    }
+
+    # Build hashes
+    Write-Host "Building hash index directory"
+    foreach ($file in (Get-ChildItem config\common_hashes)) {
+        $split = $file.Name.LastIndexOf('.')
+
+        if ($split -ne -1) {
+            $fileOut = "$base/bin/package_index/$($file.Name.SubString(0, $split)).wni"
+        } else {
+            $fileOut = "$base/bin/package_index/$($file.Name).wni"
+        }
+
+        build\bin\Release\acts.exe --noUpdater -t wni_gen $file.FullName $fileOut
+    }
+    Write-Host "Building gscbin string index"
+    foreach ($file in (Get-ChildItem config\gscbin\opaques)) {
+        $split = $file.Name.LastIndexOf('.')
+
+        if ($split -ne -1) {
+            $vmName = $file.Name.SubString(0, $split)
+        } else {
+            $vmName = $file.Name;
+        }
+        $fileOut = "$base/bin/package_index/gscbin-opaques-$vmName.acef"
+
+        build\bin\Release\acts.exe --noUpdater -t acef_gscopaque $vmName $file.FullName $fileOut opaque zstd_hc
+    }
+
+    foreach ($file in (Get-ChildItem config\gscbin\functions)) {
+        $split = $file.Name.LastIndexOf('.')
+
+        if ($split -ne -1) {
+            $vmName = $file.Name.SubString(0, $split)
+        } else {
+            $vmName = $file.Name;
+        }
+        $fileOut = "$base/bin/package_index/gscbin-functions-$vmName.acef"
+
+        build\bin\Release\acts.exe --noUpdater -t acef_gscopaque $vmName $file.FullName $fileOut function zstd_hc
+    }
+    
+    foreach ($file in (Get-ChildItem config\gscbin\methods)) {
+        $split = $file.Name.LastIndexOf('.')
+
+        if ($split -ne -1) {
+            $vmName = $file.Name.SubString(0, $split)
+        } else {
+            $vmName = $file.Name;
+        }
+        $fileOut = "$base/bin/package_index/gscbin-methods-$vmName.acef"
+
+        build\bin\Release\acts.exe --noUpdater -t acef_gscopaque $vmName $file.FullName $fileOut method zstd_hc
+    }
+
+    # Compress
+    Compress-Archive -LiteralPath "$base" -DestinationPath "$base.zip" > $null
+    Write-Host "Packaged to '$base.zip'"
+
+    Write-Host "Building dev package..."
+    foreach ($fileItem in (Get-ChildItem $base/bin)) {
+        $fileName = $fileItem.Name
+        $split = $fileName.LastIndexOf(".exe")
+
+        if ($split -ne -1) {
+            $pdbFile = "build/bin/$($fileName.SubString(0, $split)).pdb"
+        }
+        else {
+            $split = $fileName.LastIndexOf(".dll")
+
+            if ($split -ne -1) {
+                $pdbFile = "build/bin/$($fileName.SubString(0, $split)).pdb"
+            }
+            else {
+                continue
+            }
+        }
+        Copy-Item $pdbFile "$base/bin" -ErrorAction Ignore
+    }
+    Compress-Archive -LiteralPath "$base" -DestinationPath "$base-dev.zip" > $null
+    Write-Host "Packaged to '$base-dev.zip'"
+
+}
+finally {
+    $prevPwd | Set-Location
+}

@@ -1,0 +1,247 @@
+{
+    "module": "cod22-cod_dump.exe",
+    "firstAssetName": "physicslibrary",
+    "endAssetName": "string",
+    "commonFastFiles": [
+        "code_post_gfx.ff",
+        "code_pre_gfx.ff",
+        "code_reloadable.ff",
+        "frontend_ui.ff",
+        "frontend_ui_boot.ff",
+        "global.ff",
+        "global_base_mp.ff",
+        "global_cp.ff",
+        "global_shared_mp.ff",
+        "global_stream_mp.ff",
+        "ingame.ff",
+        "ingame_base_mp.ff",
+        "ingame_br.ff",
+        "ingame_cp.ff",
+        "ingame_mp.ff",
+        "ingame_shared_mp.ff",
+    ],
+    "scans": {
+        "Load_Asset": {
+            "scan": "48 89 05 ?? ?? ?? ?? E8 ?? ?? ?? ?? FF 43 14 FF C7 3B 7B 10 72 CC",
+            "offset": 8,
+            "type": "Relative",
+            "single": true
+        },
+        "loadAsset": {
+            "scan": "48 89 05 ?? ?? ?? ?? E8 ?? ?? ?? ?? FF 43 14 FF C7 3B 7B 10 72 CC",
+            "offset": 3,
+            "type": "Relative",
+            "single": true
+        },
+        "DB_InitStreams": {
+            "scan": "48 8B D1 48 8D 05 ?? ?? ?? ?? 41 B8 02",
+            "type": "Absolute",
+            "single": true
+        },
+        "Load_ScriptStringList": {
+            "scan": "48 89 1D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 40 88 70 04",
+            "type": "Relative",
+            "offset": 8,
+            "single": true
+        },
+        "loadStringList": {
+            "scan": "48 89 1D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 40 88 70 04",
+            "type": "Relative",
+            "offset": 3,
+            "single": true
+        },
+        "DB_PatchMem_FixStreamAlignment": {
+            "scan": "40 53 80 3D ?? ?? ?? ?? ?? 4C",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_PushStreamPos": {
+            "scan": "48 83 EC 28 8B 15 ?? ?? ?? ?? 4C",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_PopStreamPos": {
+            "scan": "E8 ?? ?? ?? ?? 8D 4E 0E E8 ?? ?? ?? ?? 48 83 7B 18 00",
+            "offset": 1,
+            "type": "Relative",
+            "single": true
+        },
+        "LoadStreamTA": {
+            "scan": "83 F9 01 74 44",
+            "type": "Absolute",
+            "single": true
+        },
+        "Load_StringName": {
+            "scan": "48 89 5C 24 ?? 57 48 83 EC ?? 48 8B 39 BA",
+            "type": "Absolute",
+            "single": true
+        },
+        "Load_String": {
+            "scan": "48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 48 8B 31 48 8B F9 48 8B CE",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_AddXAsset": {
+            "scan": "48 89 5C 24 08 48 89 6C 24 18 48 89 74 24 20 57 48 83 EC 20 48 8B DA",
+            "type": "Absolute",
+            "single": true
+        },
+        "Load_CustomScriptString": {
+            "scan": "48 8B 05 ?? ?? ?? ?? 44 8B 01",
+            "type": "Absolute",
+            "single": true
+        },
+        "streamPos": {
+            "scan": "48 89 15 ?? ?? ?? ?? 41 8B 80",
+            "offset": 3,
+            "type": "Relative",
+            "single": true
+        },
+        "rewind": {
+            "scan": "49 8B 84 CB ?? ?? ?? ?? 48 85 C0 74 06",
+            "offset": 4,
+            "type": "Relative",
+            "single": true
+        },
+        "streamPosIndex": {
+            "scan": "83 3D ?? ?? ?? ?? ?? 75 0C 4C 8B C7",
+            "offset": 2,
+            "postOffset": 1,
+            "type": "Relative",
+            "single": true
+        },
+        "$unkFixStreamAlign": {
+            "scan": "40 53 80 3D ?? ?? ?? ?? 00 4C 8D 1D ?? ?? ?? ?? 4C 8B C9",
+            "offset": 4,
+            "type": "Relative",
+            "single": true
+        },
+        "poolInfo": {
+            "scan": "40 53 48 63 C9 48 8D 1D ? ? ? ?",
+            "type": "Relative",
+            "offset": 8,
+            "postOffset": -32,
+            "single": true
+        },
+        "DB_LinkSoundBank": {
+            "scan": "48 89 5C 24 10 57 48 83 EC 20 48 8B 11 48 8B F9 B9 25",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LinkSoundBankTransient": {
+            "scan": "48 89 5C 24 10 57 48 83 EC 20 48 8B 11 48 8B F9 B9 27",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LinkStreamingInfo": {
+            "scan": "40 53 48 83 EC 20 48 8B 01 48 8D 54 24 30 48 8B D9 48 89 44 24 30 B9 57",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LinkComputeshader": {
+            "scan": "40 53 48 83 EC 20 48 8B 01 48 8D 54 24 30 48 8B D9 48 89 44 24 30 B9 0C",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LinkLibShader": {
+            "scan": "40 53 48 83 EC 20 48 8B 01 48 8D 54 24 30 48 8B D9 48 89 44 24 30 B9 0D",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LinkDLogSchema": {
+            "scan": "40 53 48 83 EC 20 48 8B 01 48 8D 54 24 30 48 8B D9 48 89 44 24 30 B9 8E",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LinkXModel": {
+            "scan": "40 53 48 83 EC 20 48 8B 01 48 8D 54 24 30 48 8B D9 48 89 44 24 30 B9 09",
+            "type": "Absolute",
+            "single": true
+        }
+    },
+    "nullscans": {
+        "fastfile": {
+            "$u0": {
+                "scan": "40 53 48 83 EC 20 8B 42 14",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u1": {
+                "scan": "4C 8B DC 49 89 5B 20 41 56 48 81 EC A0 00 00 00 4C",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u2": {
+                "scan": "40 53 48 83 EC 20 8B 42 14",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u3": {
+                "scan": "48 8B C4 53 48 81 EC C0 00 00 00 44",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u4": {
+                "scan": "48 89 5C 24 08 57 48 83 EC 30 48 8B F9 48 8B DA B9",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u5": {
+                "scan": "49 8B C0 4C 8B CA 4C 8B 01",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u6": {
+                "scan": "4C 8B DC 57 41 56 48 81 EC 58",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u7": {
+                "scan": "48 8B C4 53 41 57 48 83 EC 58 44",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u8": {
+                "scan": "4C 8B DC 49 89 5B 20 41 56 48 81 EC A0 00 00 00 48",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u9": {
+                "scan": "48 89 5C 24 18 48 89 6C 24 20 56 41 54 41 55 41 56 41 57 48 83 EC 40",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u10": {
+                "scan": "40 55 53 56 57 41 56 48 8D 6C 24 D0 48 81 EC 30 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 D0",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u11": {
+                "scan": "48 89 5C 24 08 57 48 83 EC 20 48 8B F9 48 8B DA B9 FE FF",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u12": {
+                "scan": "48 89 5C 24 08 55 48 8D 6C 24 A9 48 81 EC C0 00 00 00 45",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u13": {
+                "scan": "48 8B 0D ?? ?? ?? ?? 0F B7 81 ?? ?? ?? ?? 66 89 44",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u14": {
+                "scan": "48 89 5C 24 08 57 48 81 EC 90 00 00 00 89",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u15": {
+                "scan": "E8 ?? ?? ?? ?? 84 C0 75 0F 66 C7 05",
+                "type": "Relative",
+                "offset": 1,
+                "single": true
+            }
+        }
+    }
+}

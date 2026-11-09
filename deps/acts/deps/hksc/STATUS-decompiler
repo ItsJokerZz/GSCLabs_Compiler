@@ -1,0 +1,25 @@
+Status for Havok Script decompiler
+==================================
+
+The decompiler's development started around November of 2022. It has
+gone through a few redesigns over time while the general approach has
+remained the same, that approach being to do 2 passes on the bytecode,
+generating block information in the first pass, and then doing symbolic
+execution and dumping output in the second pass. But at one point, the
+2 passes turned into 2 sets of passes. The actual number of bytecode
+passes may be more than 2, but the idea is that there is an internal
+interface between the 2 sets of passes. The first set of passes is
+contained in the function `pass1', and the second set is in `pass2', and
+the internal interface dictates what data `pass1' is required to
+generate, and what data `pass2' shouold expect to exist by the time it
+runs.
+
+I've made a lot of progress on generating variable info when not using
+debug info, but I have yet to test hksc without debug info.
+
+With debug info, all unit tests are passing.
+
+I am working on getting the test programs passing with debug info.
+
+One thing I know that I have not yet addressed is detecting/handling
+assignment conflicts.

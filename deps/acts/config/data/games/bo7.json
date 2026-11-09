@@ -1,0 +1,362 @@
+{
+    "module": "cod_dump.exe",
+    "firstAssetName": "physicssfxeventasset",
+    "endAssetName": "assetlist",
+    "commonFastFiles": [
+        "code_post_gfx.ff",
+        "code_pre_gfx.ff",
+        "code_reloadable.ff",
+        "frontend_ui.ff",
+        "frontend_ui_boot.ff",
+        "global.ff",
+        "global_base_mp.ff",
+        "global_shared_mp.ff",
+        "global_stream_cfwd_mp.ff",
+        "global_stream_mp.ff",
+        "ingame.ff",
+        "ingame_base_mp.ff",
+        "ingame_bm.ff",
+        "ingame_br.ff",
+        "ingame_mp.ff",
+        "ingame_ob.ff",
+        "ingame_shared_mp.ff",
+        "ingame_zm.ff"
+    ],
+    "cdecls": [
+        {
+            "decl": "struct Asset { AssetType type; void* handle; };"
+        },
+        {
+            "decl": "typedef uint64_t XHash64;"
+        },
+        {
+            "decl": "typedef uint32_t XHash32;"
+        }
+    ],
+    "ctypes": [
+        {
+            "name": "AssetType",
+            "type": "Enum"
+        },
+        {
+            "name": "DBLoadCtx",
+            "type": "Struct"
+        },
+        {
+            "name": "DBRewind",
+            "type": "Struct"
+        },
+        {
+            "name": "XZoneMemory",
+            "type": "Struct"
+        },
+        {
+            "name": "LoadStreamObject",
+            "type": "Struct"
+        },
+        {
+            "name": "AssetPoolInfo",
+            "type": "Struct"
+        },
+        {
+            "name": "XFileBlock",
+            "type": "Enum",
+            "fields": {
+                "XFILE_BLOCK_MEMMAPPED": 11,
+                "XFILE_BLOCK_VIRTUAL": 15,
+                "XFILE_BLOCK_COUNT": 16
+            }
+        }
+    ],
+    "scans": {
+        "Scr_RegisterGscFunction": {
+            "scan": "4C 8B 4A 08 4D 85 C9 74 35",
+            "type": "Absolute",
+            "single": false
+        },
+        "Scr_RegisterGscMethod": {
+            "scan": "4C 8B 4A 08 4D 85 C9 74 3F",
+            "type": "Absolute",
+            "single": false
+        },
+        "$Scr_RegisterGens": {
+            "scan": "48 89 5C 24 08 55 48 8B EC 48 83 EC 40 48 8B D9 E8 ? ? ? ? ? ? ? ?",
+            "type": "Absolute",
+            "single": false
+        },
+        "Load_AssetType": {
+            "scan": "E8 ?? ?? ?? ?? 4C 8D 43 08 4C 8B CB 33 D2 48 8B CF E8 ?? ?? ?? ?? 48 8B 5C 24 50",
+            "ctype": "void Load_AssetType(DBLoadCtx* ctx, AssetType* type)",
+            "offset": 1,
+            "type": "Relative",
+            "single": true
+        },
+        "Load_AssetHeader": {
+            "scan": "E8 ?? ?? ?? ?? 4C 8D 43 08 4C 8B CB 33 D2 48 8B CF E8 ?? ?? ?? ?? 48 8B 5C 24 50",
+            "ctype": "void Load_AssetHeader(DBLoadCtx* ctx, bool atStreamStart, void** handle, Asset* asset)",
+            "offset": 18,
+            "type": "Relative",
+            "single": true
+        },
+        "loadStreamObj": {
+            "scan": "4C 8B DC 49 89 5B ? 57 48 83 EC ? 49 8B D8 48 8B F9 84 D2 74 3C 48 8B 05 ? ? ? ? 4D 8D 4B E8 49 C7 43 ? ? ? ? ? 4D 8D 43 ? 49 89 5B E8 48 8B D1 C6 44 24 ? ? 48 8D 0D ? ? ? ? 4C 8B 10 49 8D 43 ? 49 89 43 D8 41 FF D2 84 C0 74 1C 48",
+            "ctype": "LoadStreamObject loadStreamObj",
+            "offset": 25,
+            "type": "Relative",
+            "single": false
+        },
+        "Load_Asset": {
+            "scan": "4C 8B DC 49 89 5B ? 57 48 83 EC ? 49 8B D8 48 8B F9 84 D2 74 3C 48 8B 05 ? ? ? ? 4D 8D 4B E8 49 C7 43 ? ? ? ? ? 4D 8D 43 ? 49 89 5B E8 48 8B D1 C6 44 24 ? ? 48 8D 0D ? ? ? ? 4C 8B 10 49 8D 43 ? 49 89 43 D8 41 FF D2 84 C0 74 1C 48",
+            "ctype": "void Load_Asset(DBLoadCtx* ctx, bool atStreamStart, Asset* asset)",
+            "type": "Absolute",
+            "single": true
+        },
+        "XXH3_64bits_withSeed": {
+            "scan": "48 89 5C 24 ? 57 48 83 EC ? 49 8B F8 4C 8B DA 48 8B D9 48",
+            "ctype": "uint64_t XXH3_64bits_withSeed(const char* str, size_t len, uint64_t iv)",
+            "type": "Absolute",
+            "single": true
+        },
+        "poolInfo": {
+            "scan": "48 8D 0D ?? ?? ?? ?? 48 8B DA 48 8D 04 40 48 03 C0 48 8B 04 C1",
+            "ctype": "AssetPoolInfo poolInfo",
+            "type": "Relative",
+            "offset": 3,
+            "postOffset": -16,
+            "single": true
+        },
+        "GetMappedTypeStub": {
+            "scan": "40 56 41 56 48 83 EC 28 4C 8B 05 ?? ?? ?? ?? 4C",
+            "ctype": "AssetType GetMappedTypeStub(uint32_t hashedType)",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_ReadXFile": {
+            "scan": "E8 ?? ?? ?? ?? 80 3E 00 74 1E",
+            "type": "Relative",
+            "offset": 1,
+            "single": true,
+            "ctype": "void DB_ReadXFile(DBLoadCtx *ctx, void* ptr, int64_t len)"
+        },
+        "DB_SkipXFile": {
+            "scan": "E8 ?? ?? ?? ?? E9 B6 00 00 00 48 8B 0F",
+            "type": "Relative",
+            "offset": 1,
+            "single": true,
+            "ctype": "void DB_SkipXFile(DBLoadCtx *ctx, int64_t len)"
+        },
+        "DB_RewindPrepare": {
+            "scan": "E8 ?? ?? ?? ?? 48 8B 07 BA 07 00 00 00 48 8B CF FF 50 ?? 48 8D 54 24 30 48 8B CF 4C 8B C0 48 8B D8 E8 ?? ?? ?? ?? 44 8B 4E 08 4C 8B C3 B2 01 48 8B CF E8 ?? ?? ?? ?? 48 8D 54 24 30 48 8B CF E8",
+            "type": "Relative",
+            "offset": 1,
+            "ctype": "void DB_RewindPrepare(DBLoadCtx *ctx, DBRewind *rewind, void **pHandle, bool biHandle, __int32 state, bool a6)"
+        },
+        "DB_RewindSetData": {
+            "scan": "E8 ?? ?? ?? ?? 48 8B 07 BA 07 00 00 00 48 8B CF FF 50 ?? 48 8D 54 24 30 48 8B CF 4C 8B C0 48 8B D8 E8 ?? ?? ?? ?? 44 8B 4E 08 4C 8B C3 B2 01 48 8B CF E8 ?? ?? ?? ?? 48 8D 54 24 30 48 8B CF E8",
+            "type": "Relative",
+            "offset": 34,
+            "ctype": "void DB_RewindSetData(DBLoadCtx *ctx, DBRewind *rewind, void *data)"
+        },
+        "DB_LoadRewindRef": {
+            "scan": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 48 8B 3D ?? ?? ?? ?? 48",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_AllocRewindRef": {
+            "scan": "E8 ?? ?? ?? ?? 49 89 07 44 88 B6 F0 05 00 00",
+            "type": "Relative",
+            "offset": 1,
+            "single": true
+        },
+        "DB_SaveRewindRef": {
+            "scan": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 54 41 56 41 57 48 83 EC 20 48 8B 35 ?? ?? ?? ?? 48",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_InitLoadStreams": {
+            "scan": "E8 ?? ?? ?? ?? 48 8B 4D 78 48 8B 81",
+            "type": "Relative",
+            "offset": 1,
+            "ctype": "void __fastcall DB_InitLoadStreams(DBLoadCtx *ctx, XZoneMemory *zoneMemory)"
+        },
+        "DB_LoadStringList": {
+            "scan": "E8 ?? ?? ?? ?? 4C 8D ?? 18 44 88 ?? 04 4D 8B ?? 33 D2 48 8B CE E8 ?? ?? ?? ?? 48 8B 06 48 8B CE FF 50",
+            "type": "Relative",
+            "offset": 1,
+            "ctype": "void DB_LoadStringList(DBLoadCtx *ctx, bool atStreamStart, AssetList *list)"
+        },
+        "$DB_LoadUnkList": {
+            "scan": "E8 ?? ?? ?? ?? 4C 8D ?? 18 44 88 ?? 04 4D 8B ?? 33 D2 48 8B CE E8 ?? ?? ?? ?? 48 8B 06 48 8B CE FF 50",
+            "type": "Relative",
+            "offset": 22,
+            "ctype": "void DB_LoadStringList(DBLoadCtx *ctx, bool atStreamStart, AssetList *list)"
+        },
+        "$unkData0x200A8": {
+            "scan": "48 89 05 ?? ?? ?? ?? 48 8D 15 ?? ?? ?? ?? C5 F9 EF C0 89 58 24",
+            "type": "Relative",
+            "offset": 3,
+            "single": true
+        },
+        "LoadStreamTA": {
+            "scan": "E8 ?? ?? ?? ?? 48 8B 07 BA 07 00 00 00 48 8B CF FF 50 ?? 48 8D 54 24 30 48 8B CF 4C 8B C0 48 8B D8 E8 ?? ?? ?? ?? 44 8B 4E 08 4C 8B C3 B2 01 48 8B CF E8 ?? ?? ?? ?? 48 8D 54 24 30 48 8B CF E8",
+            "ctype": "bool LoadStreamTA(DBLoadCtx* context, bool atStreamStart, void* ptr, int64_t len)",
+            "type": "Relative",
+            "offset": 51
+        },
+        "DB_RewindEnd": {
+            "scan": "E8 ?? ?? ?? ?? 48 8B 07 BA 07 00 00 00 48 8B CF FF 50 ?? 48 8D 54 24 30 48 8B CF 4C 8B C0 48 8B D8 E8 ?? ?? ?? ?? 44 8B 4E 08 4C 8B C3 B2 01 48 8B CF E8 ?? ?? ?? ?? 48 8D 54 24 30 48 8B CF E8",
+            "type": "Relative",
+            "offset": 64,
+            "ctype": "void DB_RewindEnd(DBLoadCtx *ctx, DBRewind *rewind)"
+        },
+        "Load_String": {
+            "scan": "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B 32 41",
+            "ctype": "void Load_String(DBLoadCtx* context, char** pstr)",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_AddAsset": {
+            "scan": "48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 49 8B D8 8B F2 48 8B F9 E8 ?? ?? ?? ?? 4C",
+            "ctype": "void* DB_AddAsset(DBLoadCtx* ctx, AssetType type, void** handle)",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_AddAssetRef": {
+            "scan": "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 49 8B E8 48 8B DA 8B",
+            "ctype": "void* DB_AddAssetRef(AssetType type, uint64_t name, void* strName)",
+            "type": "Absolute",
+            "single": true
+        },
+        "Load_CustomScriptString": {
+            "scan": "48 89 5C 24 ?? 57 48 83 EC ?? 48 8B FA 41 B8 04",
+            "ctype": "void Load_CustomScriptString(DBLoadCtx* context, uint32_t* pstr)",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_LoadStreamOffset": {
+            "scan": "48 89 5C 24 ?? 57 48 83 EC ?? 48 8B 81 ?? ?? ?? ?? 4C 8B CA",
+            "ctype": "void DB_LoadStreamOffset(DBLoadCtx* ctx, uint64_t val, void** pptr)",
+            "type": "Absolute",
+            "single": true
+        },
+        "DB_RegisterStreamOffset": {
+            "scan": "48 89 5C 24 ?? 48 89 6C 24 ?? 56 48 83 EC ?? 48 8B 81 ?? ?? ?? ?? 48 8B DA",
+            "ctype": "void DB_RegisterStreamOffset(DBLoadCtx* ctx, uint64_t val, void* ptr)",
+            "type": "Absolute",
+            "single": true
+        },
+        "$Unk_Align_Ret": {
+            "scan": "8B 81 ?? ?? ?? ?? 48 8D 04 40 48",
+            "type": "Absolute",
+            "single": true
+        },
+        "$Unk_RetFalse": {
+            "scan": "8B 81 ?? ?? ?? ?? 48 8D 14 40 83",
+            "type": "Absolute",
+            "single": true
+        }
+    },
+    "nullscans": {
+        "gsc": {
+            "$Scr_RegisterGscIgnored": {
+                "scan": "40 53 48 83 EC ?? 33 C0 66 C7 81 ?? ?? ?? ?? ?? ?? 48 89 81",
+                "type": "Absolute",
+                "single": false
+            },
+            "$Scr_RegisterGscSortIgnored": {
+                "scan": "40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 75 20",
+                "type": "Absolute",
+                "single": false
+            }
+        },
+        "fastfile": {
+            "DB_RegisterScrString": {
+                "scan": "48 89 5C 24 08 48 89 74 24 18 57 48 83 EC 20 48 8B FA 48",
+                "ctype": "void DB_RegisterScrString(DBLoadCtx* context, const char** pstr)",
+                "type": "Absolute",
+                "single": true
+            },
+            "$StreamDelta1": {
+                "scan": "4C 8B DC 56 48 83 EC ?? 4C",
+                "type": "Absolute",
+                "single": true
+            },
+            "$StreamDelta2": {
+                "scan": "40 56 48 83 EC ?? 4C 8B D2",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadImage": {
+                "scan": "40 53 48 83 EC 20 41 F6 40 14 04 49 8B D8 75",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u1": {
+                "scan": "C5 FB 10 02 44 8B 42 08 FF",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u2": {
+                "scan": "48 89 5C 24 ?? 57 48 83 EC ?? 49 8B D8 48 8B FA B9",
+                "type": "Absolute",
+                "single": true
+            },
+            "$u3": {
+                "scan": "48 89 5C 24 ? 55 48 8D 6C 24 A9 48 81 EC ? ? ? ? 41",
+                "type": "Absolute",
+                "single": false,
+                "multiple": true
+            },
+            "$u4": {
+                "scan": "40 53 48 83 EC 20 45 0F B6 48 18 49",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadSound": {
+                "scan": "48 8B 05 ?? ?? ?? ?? 0F B7 80",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadSound2": {
+                "scan": "48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 41 0F B7 D8 0F",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadModel": {
+                "scan": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 81",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadModel2": {
+                "scan": "49 8B C0 4C 8B 02",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadStreamingInfo": {
+                "scan": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 20 0F B6 EA",
+                "type": "Absolute",
+                "single": true
+            },
+            "DB_LoadComputeShaders": {
+                "scan": "40 53 48 83 EC ?? 48 8B 02 4C 8D 44 24 ?? 48 8B DA 48 89 44 24 ?? BA ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B C8 48 89 03 E8 ?? ?? ?? ?? 48 8B",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadLibShared": {
+                "scan": "48 83 EC 28 E8 ?? ?? ?? ?? 83 F8 FF 75 5A",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadLibShared2": {
+                "scan": "48 89 74 24 10 57 48 83 EC 20 8B FA 48 8B F1 83 FA FF 74 24 8B CA 48 89 5C 24 30 E8",
+                "type": "Absolute",
+                "single": true
+            },
+            "$LoadDlogSchema": {
+                "scan": "48 89 5C 24 20 48 89 4C 24 08 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 20 45",
+                "type": "Absolute",
+                "single": true
+            }
+        }
+    }
+}

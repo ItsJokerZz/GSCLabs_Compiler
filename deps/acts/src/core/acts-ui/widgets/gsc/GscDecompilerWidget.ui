@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GscDecompilerWidgetClass</class>
+ <widget class="QWidget" name="GscDecompilerWidgetClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>959</width>
+    <height>622</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>GscDecompilerWidget</string>
+  </property>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>30</y>
+     <width>911</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="mainLayout">
+    <item>
+     <widget class="QTextEdit" name="textEdit"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
